@@ -21,9 +21,11 @@ trait FiltersResults
         $allowedAll = in_array($user->profile, ['admin', 'administrator', 'administrador', 'psychologist', 'psicologo', 'supervisor']);
         $date = $request->input('date', now()->toDateString());
         $search = trim((string) $request->input('search', ''));
+        $placeId = $request->input('place_id');
 
         return $query
             ->when(! $allowedAll && $user->place, fn ($query) => $query->where('place_id', $user->place))
+            ->when($allowedAll && $placeId, fn ($query) => $query->where('place_id', $placeId))
             ->when($date, fn ($query) => $query->whereDate('created_at', $date))
             ->when($search !== '', function ($query) use ($search, $searchColumns) {
                 $query->where(function ($query) use ($search, $searchColumns) {

@@ -51,8 +51,13 @@
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                    @if (Auth::user()->profile !== 'patient')
+                                    <a class="dropdown-item" href="{{ route('patients.create') }}">Pacientes</a>
+                                    @endif
+
                                     @if (in_array(Auth::user()->profile, ['admin', 'administrator', 'administrador', 'supervisor']))
                                     <a class="dropdown-item" href="{{ route('system-users.index') }}">Usuarios del sistema</a>
+                                    <a class="dropdown-item" href="{{ route('places.index') }}">Sedes</a>
                                     @endif
 
                                     <a class="dropdown-item" href="{{ route('logout') }}"
