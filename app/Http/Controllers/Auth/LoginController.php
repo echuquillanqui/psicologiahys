@@ -54,16 +54,28 @@ class LoginController extends Controller
     {
         $loginType = $request->input('login_type');
         $field = $loginType === 'patient' ? 'username' : 'email';
-        $user = User::where($field, $request->input('login'))->first();
+        $login = $this->loginValue($request);
+        $user = User::where($field, $login)->first();
 
         if (! $user || ! $user->active || ($loginType === 'patient') !== ($user->profile === 'patient')) {
             return false;
         }
 
         return Auth::attempt([
-            $field => $request->input('login'),
+            $field => $login,
             'password' => $request->input('password'),
         ], $request->boolean('remember'));
+    }
+
+    private function loginValue(Request $request): string
+    {
+        $login = trim($request->input('login'));
+
+        if ($request->input('login_type') === 'patient') {
+            return preg_replace('/\s+/', '', $login);
+        }
+
+        return $login;
     }
 
     public function __construct()
