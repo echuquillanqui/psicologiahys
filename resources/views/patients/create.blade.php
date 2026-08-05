@@ -29,6 +29,10 @@
                                 @endforeach
                             </select>
                         </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" name="active" value="1" class="form-check-input" id="patient-active" @checked(old('active', true))>
+                            <label class="form-check-label" for="patient-active">Paciente habilitado</label>
+                        </div>
                         <div class="mb-3">
                             <label class="form-label">Exámenes asignados</label>
                             @foreach($exams as $key => $label)
@@ -39,7 +43,7 @@
                             @endforeach
                         </div>
                         <button class="btn btn-primary">Guardar paciente</button>
-                        <a href="{{ route('home') }}" class="btn btn-secondary">Cancelar</a>
+                        <a href="{{ route('patients.index') }}" class="btn btn-secondary">Cancelar</a>
                     </form>
                 </div>
             </div>

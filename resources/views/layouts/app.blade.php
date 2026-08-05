@@ -33,7 +33,7 @@
                         @auth
                             @if (Auth::user()->profile !== 'patient')
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('patients.create') }}">Pacientes</a>
+                                    <a class="nav-link" href="{{ route('patients.index') }}">Pacientes</a>
                                 </li>
                             @endif
 
@@ -64,7 +64,7 @@
 
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                     @if (Auth::user()->profile !== 'patient')
-                                    <a class="dropdown-item" href="{{ route('patients.create') }}">Pacientes</a>
+                                    <a class="dropdown-item" href="{{ route('patients.index') }}">Pacientes</a>
                                     @endif
 
                                     @if (in_array(Auth::user()->profile, ['admin', 'administrator', 'administrador', 'supervisor']))

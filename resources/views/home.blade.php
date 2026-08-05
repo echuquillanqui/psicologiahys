@@ -25,7 +25,7 @@
 
     @if ($user->profile !== 'patient')
         <div class="mb-3 text-end">
-            <a href="{{ route('patients.create') }}" class="btn btn-dark">Registrar paciente y asignar exámenes</a>
+            <a href="{{ route('patients.index') }}" class="btn btn-dark">Registrar paciente y asignar exámenes</a>
         </div>
     @endif
 
