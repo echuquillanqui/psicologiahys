@@ -80,11 +80,14 @@
                             <td>{{ $patient->username }}</td>
                             <td>{{ optional($places->firstWhere('id', $patient->place))->name ?? 'Sin sede' }}</td>
                             <td>
-                                @forelse($patient->assigned_exams ?? [] as $exam)
-                                    <span class="badge bg-info text-dark mb-1">{{ $exams[$exam] ?? $exam }}</span>
-                                @empty
-                                    <span class="text-muted">Sin exámenes</span>
-                                @endforelse
+                                @php($assignedExams = $patient->assigned_exams ?? [])
+                                @if(count($assignedExams) > 0)
+                                    <button type="button" class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#patientExamsModal{{ $patient->id }}">
+                                        {{ count($assignedExams) }} {{ count($assignedExams) === 1 ? 'examen' : 'exámenes' }}
+                                    </button>
+                                @else
+                                    <span class="text-muted">0 exámenes</span>
+                                @endif
                             </td>
                             <td><span class="badge {{ $patient->active ? 'bg-success' : 'bg-secondary' }}">{{ $patient->active ? 'Habilitado' : 'Deshabilitado' }}</span></td>
                             <td>{{ optional($patient->created_at)->format('d/m/Y') }}</td>
@@ -108,6 +111,31 @@
 </div>
 
 @foreach($patients as $patient)
+<div class="modal fade" id="patientExamsModal{{ $patient->id }}" tabindex="-1" aria-labelledby="patientExamsModalLabel{{ $patient->id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="patientExamsModalLabel{{ $patient->id }}">Exámenes de {{ $patient->name }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                @php($assignedExams = $patient->assigned_exams ?? [])
+                @if(count($assignedExams) > 0)
+                    <ul class="list-group list-group-flush">
+                        @foreach($assignedExams as $exam)
+                            <li class="list-group-item px-0">{{ $exams[$exam] ?? $exam }}</li>
+                        @endforeach
+                    </ul>
+                @else
+                    <p class="text-muted mb-0">Este paciente no tiene exámenes asignados.</p>
+                @endif
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="modal fade" id="editPatientModal{{ $patient->id }}" tabindex="-1" aria-labelledby="editPatientModalLabel{{ $patient->id }}" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <form class="modal-content" method="POST" action="{{ route('patients.update', $patient) }}">
