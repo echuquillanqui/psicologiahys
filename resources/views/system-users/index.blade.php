@@ -17,6 +17,20 @@
         </div>
     </div>
 
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <form method="GET" action="{{ route('system-users.index') }}" class="row g-3 align-items-end">
+                <div class="col-md-3"><label class="form-label">Buscar</label><input name="search" class="form-control" value="{{ $filters['search'] ?? '' }}" placeholder="Nombre, DNI o email"></div>
+                <div class="col-md-2"><label class="form-label">Fecha de registro</label><input type="date" name="date" class="form-control" value="{{ $filters['date'] ?? '' }}"></div>
+                <div class="col-md-2"><label class="form-label">Sede</label><select name="place_id" class="form-select"><option value="">Todas las sedes</option>@foreach($places as $place)<option value="{{ $place->id }}" @selected(($filters['place_id'] ?? '') == $place->id)>{{ $place->name }}</option>@endforeach</select></div>
+                <div class="col-md-2"><label class="form-label">Rol</label><select name="profile" class="form-select"><option value="">Todos los roles</option>@foreach($roles as $value => $label)<option value="{{ $value }}" @selected(($filters['profile'] ?? '') === $value)>{{ $label }}</option>@endforeach</select></div>
+                <div class="col-md-2"><label class="form-label">Estado</label><select name="status" class="form-select"><option value="">Todos</option><option value="active" @selected(($filters['status'] ?? '') === 'active')>Habilitado</option><option value="inactive" @selected(($filters['status'] ?? '') === 'inactive')>Deshabilitado</option></select></div>
+                <div class="col-md-1 d-flex gap-2"><button class="btn btn-outline-primary">Filtrar</button></div>
+                <div class="col-12"><a href="{{ route('system-users.index') }}" class="btn btn-outline-secondary">Limpiar filtros</a></div>
+            </form>
+        </div>
+    </div>
     <div class="card">
         <div class="card-body table-responsive">
             <table class="table table-hover align-middle">
@@ -28,6 +42,7 @@
                         <th>Rol</th>
                         <th>Sede</th>
                         <th>Estado</th>
+                        <th>Fecha de registro</th>
                         <th class="text-end">Acciones</th>
                     </tr>
                 </thead>
@@ -40,6 +55,7 @@
                             <td>{{ $roles[$systemUser->profile] ?? $systemUser->profile }}</td>
                             <td>{{ optional($places->firstWhere('id', $systemUser->place))->name ?? 'Todas' }}</td>
                             <td><span class="badge {{ $systemUser->active ? 'bg-success' : 'bg-secondary' }}">{{ $systemUser->active ? 'Habilitado' : 'Deshabilitado' }}</span></td>
+                            <td>{{ optional($systemUser->created_at)->format('d/m/Y') }}</td>
                             <td class="text-end">
                                 <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editSystemUserModal{{ $systemUser->id }}">Editar</button>
                                 <form method="POST" action="{{ route('system-users.destroy', $systemUser) }}" class="d-inline" onsubmit="return confirm('¿Eliminar este usuario?')">

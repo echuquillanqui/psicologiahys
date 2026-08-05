@@ -16,17 +16,37 @@ class SystemUserController extends Controller
         'supervisor' => 'Supervisor',
     ];
 
-    public function index()
+    public function index(Request $request)
     {
         $this->authorizeSystemUsers();
 
+        $filters = $request->validate([
+            'search' => ['nullable', 'string', 'max:255'],
+            'place_id' => ['nullable', 'exists:places,id'],
+            'profile' => ['nullable', Rule::in(array_keys(self::ROLES))],
+            'status' => ['nullable', Rule::in(['active', 'inactive'])],
+            'date' => ['nullable', 'date'],
+        ]);
+
         $users = User::where('profile', '!=', 'patient')
+            ->when($filters['search'] ?? null, function ($query, $search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('name', 'like', "%{$search}%")
+                        ->orWhere('username', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            })
+            ->when($filters['place_id'] ?? null, fn ($query, $placeId) => $query->where('place', $placeId))
+            ->when($filters['profile'] ?? null, fn ($query, $profile) => $query->where('profile', $profile))
+            ->when($filters['status'] ?? null, fn ($query, $status) => $query->where('active', $status === 'active'))
+            ->when($filters['date'] ?? null, fn ($query, $date) => $query->whereDate('created_at', $date))
             ->orderBy('name')
-            ->paginate(25);
+            ->paginate(25)
+            ->withQueryString();
         $places = Place::orderBy('name')->get();
         $roles = self::ROLES;
 
-        return view('system-users.index', compact('users', 'places', 'roles'));
+        return view('system-users.index', compact('users', 'places', 'roles', 'filters'));
     }
 
     public function store(Request $request)

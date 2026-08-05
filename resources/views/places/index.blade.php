@@ -23,6 +23,18 @@
                 </div>
             </div>
 
+
+            <div class="card mb-4">
+                <div class="card-header">Filtrar sedes</div>
+                <div class="card-body">
+                    <form method="GET" action="{{ route('places.index') }}" class="row g-3 align-items-end">
+                        <div class="col-md-4"><label class="form-label">Buscar</label><input name="search" class="form-control" value="{{ $filters['search'] ?? '' }}" placeholder="Nombre o dirección"></div>
+                        <div class="col-md-3"><label class="form-label">Fecha de registro</label><input type="date" name="date" class="form-control" value="{{ $filters['date'] ?? '' }}"></div>
+                        <div class="col-md-3"><label class="form-label">Estado</label><select name="status" class="form-select"><option value="">Todos</option><option value="active" @selected(($filters['status'] ?? '') === 'active')>Habilitada</option><option value="inactive" @selected(($filters['status'] ?? '') === 'inactive')>Deshabilitada</option></select></div>
+                        <div class="col-md-2 d-flex gap-2"><button class="btn btn-outline-primary">Filtrar</button><a href="{{ route('places.index') }}" class="btn btn-outline-secondary">Limpiar</a></div>
+                    </form>
+                </div>
+            </div>
             <div class="card">
                 <div class="card-header">Sedes registradas</div>
                 <div class="card-body">

@@ -47,6 +47,10 @@
                         <option value="inactive" @selected(($filters['status'] ?? '') === 'inactive')>Deshabilitado</option>
                     </select>
                 </div>
+                <div class="col-md-3">
+                    <label class="form-label">Fecha de registro</label>
+                    <input type="date" name="date" class="form-control" value="{{ $filters['date'] ?? '' }}">
+                </div>
                 <div class="col-12 d-flex gap-2">
                     <button class="btn btn-outline-primary">Filtrar</button>
                     <a href="{{ route('patients.index') }}" class="btn btn-outline-secondary">Limpiar</a>
@@ -65,6 +69,7 @@
                         <th>Sede</th>
                         <th>Exámenes</th>
                         <th>Estado</th>
+                        <th>Fecha de registro</th>
                         <th class="text-end">Acciones</th>
                     </tr>
                 </thead>
@@ -82,6 +87,7 @@
                                 @endforelse
                             </td>
                             <td><span class="badge {{ $patient->active ? 'bg-success' : 'bg-secondary' }}">{{ $patient->active ? 'Habilitado' : 'Deshabilitado' }}</span></td>
+                            <td>{{ optional($patient->created_at)->format('d/m/Y') }}</td>
                             <td class="text-end">
                                 <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editPatientModal{{ $patient->id }}">Editar exámenes</button>
                                 <form method="POST" action="{{ route('patients.destroy', $patient) }}" class="d-inline" onsubmit="return confirm('¿Eliminar este paciente?')">
@@ -92,7 +98,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" class="text-center text-muted">No se encontraron pacientes.</td></tr>
+                        <tr><td colspan="7" class="text-center text-muted">No se encontraron pacientes.</td></tr>
                     @endforelse
                 </tbody>
             </table>
