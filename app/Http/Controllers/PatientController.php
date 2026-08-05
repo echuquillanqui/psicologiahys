@@ -29,6 +29,7 @@ class PatientController extends Controller
             'place_id' => ['nullable', 'exists:places,id'],
             'exam' => ['nullable', Rule::in(array_keys(self::EXAMS))],
             'status' => ['nullable', Rule::in(['active', 'inactive'])],
+            'date' => ['nullable', 'date'],
         ]);
 
         $patients = User::where('profile', 'patient')
@@ -41,6 +42,7 @@ class PatientController extends Controller
             ->when($filters['place_id'] ?? null, fn ($query, $placeId) => $query->where('place', $placeId))
             ->when($filters['exam'] ?? null, fn ($query, $exam) => $query->whereJsonContains('assigned_exams', $exam))
             ->when($filters['status'] ?? null, fn ($query, $status) => $query->where('active', $status === 'active'))
+            ->when($filters['date'] ?? null, fn ($query, $date) => $query->whereDate('created_at', $date))
             ->orderBy('name')
             ->paginate(25)
             ->withQueryString();

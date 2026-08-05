@@ -22,6 +22,7 @@
                                 <th scope="col">TOTAL N</th>
                                 <th scope="col">TOTAL L</th>
                                 <th scope="col">DIAGNOSTICO</th>
+                                <th scope="col">Fecha</th>
                             </tr>
                             </thead>
 
@@ -36,6 +37,7 @@
                                     <td>{{ $eysenck->suma_n }}</td>
                                     <td>{{ $eysenck->suma_l }}</td>
                                     <td>{{ $eysenck->dx }}</td>
+                                    <td>{{ $eysenck->created_at->format('Y-m-d') }}</td>
                                 </tr>
                             @endforeach
                             </tbody>

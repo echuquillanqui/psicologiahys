@@ -7,13 +7,28 @@ use Illuminate\Http\Request;
 
 class PlaceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $this->authorizePlaces();
 
-        $places = Place::orderBy('name')->paginate(25);
+        $filters = $request->validate([
+            'search' => ['nullable', 'string', 'max:255'],
+            'status' => ['nullable', 'in:active,inactive'],
+            'date' => ['nullable', 'date'],
+        ]);
 
-        return view('places.index', compact('places'));
+        $places = Place::query()
+            ->when($filters['search'] ?? null, function ($query, $search) {
+                $query->where('name', 'like', "%{$search}%")
+                    ->orWhere('address', 'like', "%{$search}%");
+            })
+            ->when($filters['status'] ?? null, fn ($query, $status) => $query->where('active', $status === 'active'))
+            ->when($filters['date'] ?? null, fn ($query, $date) => $query->whereDate('created_at', $date))
+            ->orderBy('name')
+            ->paginate(25)
+            ->withQueryString();
+
+        return view('places.index', compact('places', 'filters'));
     }
 
     public function store(Request $request)
