@@ -48,7 +48,7 @@
 
 <div class="modal fade" id="systemUserModal" tabindex="-1" aria-labelledby="systemUserModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <form class="modal-content" method="POST" action="{{ route('system-users.store') }}">
+        <form id="system-user-form" class="modal-content" method="POST" action="{{ route('system-users.store') }}">
             @csrf
             <div class="modal-header">
                 <h5 class="modal-title" id="systemUserModalLabel">Registrar usuario del sistema</h5>
@@ -60,8 +60,17 @@
                 <div class="col-md-6"><label class="form-label">Email</label><input type="email" name="email" class="form-control" value="{{ old('email') }}" required></div>
                 <div class="col-md-6"><label class="form-label">Rol</label><select name="profile" class="form-select" required>@foreach($roles as $value => $label)<option value="{{ $value }}" @selected(old('profile') === $value)>{{ $label }}</option>@endforeach</select></div>
                 <div class="col-md-6"><label class="form-label">Sede</label><select name="place_id" class="form-select"><option value="">Todas las sedes</option>@foreach($places as $place)<option value="{{ $place->id }}" @selected(old('place_id') == $place->id)>{{ $place->name }}</option>@endforeach</select></div>
-                <div class="col-md-6"><label class="form-label">Contraseña</label><input type="password" name="password" class="form-control" required></div>
-                <div class="col-md-6"><label class="form-label">Confirmar contraseña</label><input type="password" name="password_confirmation" class="form-control" required></div>
+                <div class="col-md-6">
+                    <label for="system-user-password" class="form-label">Contraseña</label>
+                    <input id="system-user-password" type="password" name="password" form="system-user-form" class="form-control @error('password') is-invalid @enderror" required autocomplete="new-password">
+                    @error('password')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+                <div class="col-md-6">
+                    <label for="system-user-password-confirmation" class="form-label">Confirmar contraseña</label>
+                    <input id="system-user-password-confirmation" type="password" name="password_confirmation" form="system-user-form" class="form-control" required autocomplete="new-password">
+                </div>
             </div>
             <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Guardar</button></div>
         </form>
