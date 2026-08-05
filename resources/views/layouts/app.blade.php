@@ -30,7 +30,19 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
+                        @auth
+                            @if (Auth::user()->profile !== 'patient')
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('patients.create') }}">Pacientes</a>
+                                </li>
+                            @endif
 
+                            @if (in_array(Auth::user()->profile, ['admin', 'administrator', 'administrador', 'supervisor']))
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('places.index') }}">Sedes</a>
+                                </li>
+                            @endif
+                        @endauth
                     </ul>
 
                     <!-- Right Side Of Navbar -->
