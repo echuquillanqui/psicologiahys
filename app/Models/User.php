@@ -22,6 +22,7 @@ class User extends Authenticatable
         'username',
         'profile',
         'place',
+        'active',
         'assigned_exams',
         'email',
         'password',
@@ -46,5 +47,6 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'assigned_exams' => 'array',
+        'active' => 'boolean',
     ];
 }
