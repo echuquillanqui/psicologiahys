@@ -2,7 +2,7 @@
 
 @section('content')
 
-    <form class="container-fluid" action="{{ route('cohen.store') }}" method="POST">
+    <form class="container-fluid exam-form" action="{{ route('cohen.store') }}" method="POST">
         @csrf
 
         <div class="row justify-content-center mb-1">

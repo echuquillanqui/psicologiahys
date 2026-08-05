@@ -8,7 +8,7 @@
                     <div class="card-header text-center">
                         <h3>{{ __('INVENTARIO EMOCIONAL BARON - H&S OCCUPATIONAL SAC') }} - {{ \Carbon\Carbon::now()->format('d-m-Y') }}</h3>
                     </div>
-                    <form action="{{ route('baron.store') }}" method="POST">
+                    <form class="exam-form" action="{{ route('baron.store') }}" method="POST">
                         @csrf
                         <div class="card-body">
 
