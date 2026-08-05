@@ -1,8 +1,208 @@
 // Fonts
-@import url('https://fonts.bunny.net/css?family=Nunito');
+@import url('https://fonts.bunny.net/css?family=Nunito:400,600,700,800&display=swap');
 
 // Variables
 @import 'variables';
 
 // Bootstrap
 @import 'bootstrap/scss/bootstrap';
+
+:root {
+    --sky-50: #f0fbff;
+    --sky-100: #e0f7ff;
+    --sky-200: #baeaff;
+    --sky-400: #38bdf8;
+    --sky-500: #0ea5e9;
+    --sky-600: #0284c7;
+    --ink-900: #0f172a;
+    --ink-600: #475569;
+    --glass: rgba(255, 255, 255, 0.82);
+    --card-shadow: 0 24px 60px rgba(2, 132, 199, 0.16);
+}
+
+html {
+    min-height: 100%;
+}
+
+body {
+    min-height: 100vh;
+    color: var(--ink-900);
+    font-family: 'Nunito', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background:
+        radial-gradient(circle at top left, rgba(56, 189, 248, 0.32), transparent 32rem),
+        radial-gradient(circle at 90% 10%, rgba(186, 230, 253, 0.58), transparent 26rem),
+        linear-gradient(135deg, #ffffff 0%, var(--sky-50) 45%, #dff7ff 100%);
+}
+
+#app {
+    min-height: 100vh;
+}
+
+main.py-4 {
+    padding-top: 2rem !important;
+    padding-bottom: 3rem !important;
+}
+
+.navbar {
+    border: 0;
+    background: rgba(255, 255, 255, 0.86) !important;
+    backdrop-filter: blur(18px);
+    box-shadow: 0 12px 34px rgba(14, 165, 233, 0.14) !important;
+}
+
+.navbar-brand {
+    color: var(--sky-600) !important;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.nav-link,
+.dropdown-item {
+    color: var(--ink-600);
+    font-weight: 700;
+}
+
+.nav-link:hover,
+.nav-link:focus,
+.dropdown-item:hover,
+.dropdown-item:focus {
+    color: var(--sky-600) !important;
+}
+
+.dropdown-menu {
+    border: 1px solid rgba(14, 165, 233, 0.14);
+    border-radius: 1rem;
+    box-shadow: var(--card-shadow);
+}
+
+.card {
+    overflow: hidden;
+    border: 1px solid rgba(14, 165, 233, 0.14);
+    border-radius: 1.35rem;
+    background: var(--glass);
+    box-shadow: var(--card-shadow);
+    backdrop-filter: blur(16px);
+    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(14, 165, 233, 0.3);
+    box-shadow: 0 30px 70px rgba(2, 132, 199, 0.2);
+}
+
+.card-header {
+    border-bottom: 1px solid rgba(14, 165, 233, 0.14);
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.95), rgba(56, 189, 248, 0.86));
+    color: #fff;
+}
+
+.card-header h1,
+.card-header h2,
+.card-header h3,
+.card-title {
+    margin-bottom: 0;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+}
+
+.card-body {
+    padding: 1.35rem;
+}
+
+.btn {
+    border: 0;
+    border-radius: 999px;
+    padding: 0.72rem 1.15rem;
+    font-weight: 800;
+    letter-spacing: 0.015em;
+    box-shadow: 0 12px 26px rgba(14, 165, 233, 0.22);
+    transition: transform 160ms ease, box-shadow 160ms ease, filter 160ms ease;
+}
+
+.btn:hover,
+.btn:focus {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 34px rgba(14, 165, 233, 0.3);
+    filter: saturate(1.08);
+}
+
+.btn-primary,
+.btn-success,
+.btn-info,
+.btn-danger,
+.btn-warning,
+.btn-secondary,
+.btn-outline-danger {
+    color: #fff !important;
+    background: linear-gradient(135deg, var(--sky-600), var(--sky-400)) !important;
+}
+
+.form-control,
+.form-select {
+    border: 1px solid rgba(14, 165, 233, 0.22);
+    border-radius: 0.9rem;
+    color: var(--ink-900);
+    background-color: rgba(255, 255, 255, 0.86);
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--sky-500);
+    box-shadow: 0 0 0 0.25rem rgba(14, 165, 233, 0.16);
+}
+
+.form-label,
+.col-form-label {
+    color: var(--ink-600);
+    font-weight: 700;
+}
+
+.table {
+    overflow: hidden;
+    border-radius: 1rem;
+    --bs-table-bg: rgba(255, 255, 255, 0.72);
+    --bs-table-striped-bg: rgba(224, 247, 255, 0.58);
+    --bs-table-hover-bg: rgba(186, 234, 255, 0.58);
+    color: var(--ink-900);
+}
+
+.table thead th {
+    border: 0;
+    background: linear-gradient(135deg, var(--sky-600), var(--sky-400));
+    color: #fff;
+    font-size: 0.82rem;
+    letter-spacing: 0.035em;
+    text-transform: uppercase;
+}
+
+.table td,
+.table th {
+    border-color: rgba(14, 165, 233, 0.12);
+    vertical-align: middle;
+}
+
+.bg-warning {
+    border-radius: 0.9rem;
+    background: linear-gradient(135deg, #e0f7ff, #ffffff) !important;
+    color: var(--sky-600) !important;
+    font-weight: 800;
+    padding: 0.8rem 1rem;
+}
+
+.alert,
+.list-group-item {
+    border-radius: 1rem;
+    border-color: rgba(14, 165, 233, 0.14);
+}
+
+@media (max-width: 767.98px) {
+    main.py-4 {
+        padding-top: 1rem !important;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+}
