@@ -30,6 +30,10 @@ class PatientController extends Controller
 
     public function store(Request $request)
     {
+        $request->merge([
+            'dni' => preg_replace('/\s+/', '', trim($request->input('dni', ''))),
+        ]);
+
         $data = $request->validate([
             'name' => ['required', 'string', 'min:5', 'max:255'],
             'dni' => ['required', 'string', 'max:20', Rule::unique('users', 'username')],
