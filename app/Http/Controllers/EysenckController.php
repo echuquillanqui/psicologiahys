@@ -3,19 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Models\Eysenck;
+use App\Http\Controllers\Concerns\FiltersResults;
 use Illuminate\Http\Request;
 
 class EysenckController extends Controller
 {
+    use FiltersResults;
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $eysencks = Eysenck::orderBy('id', 'desc')
-            ->when(auth()->user()->place, fn ($query, $placeId) => $query->where('place_id', $placeId))
-            ->whereDate('created_at', now()->toDateString())
-            ->paginate(100);
+        $this->authorizeResults();
+
+        $eysencks = $this->filterResults(Eysenck::query(), $request, ['name', 'dni', 'ocupation'])
+            ->orderBy('id', 'desc')
+            ->paginate(25)
+            ->withQueryString();
 
         return view('eysenck.index', compact('eysencks'));
     }

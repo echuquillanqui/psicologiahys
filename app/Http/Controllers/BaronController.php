@@ -3,19 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Models\Baron;
+use App\Http\Controllers\Concerns\FiltersResults;
 use Illuminate\Http\Request;
 
 class BaronController extends Controller
 {
+    use FiltersResults;
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $barons = Baron::orderBy('id', 'desc')
-            ->when(auth()->user()->place, fn ($query, $placeId) => $query->where('place_id', $placeId))
-            //->whereDate('created_at', now()->toDateString())
-            ->paginate(100);
+        $this->authorizeResults();
+
+        $barons = $this->filterResults(Baron::query(), $request, ['name', 'dni', 'ocupation'])
+            ->orderBy('id', 'desc')
+            ->paginate(25)
+            ->withQueryString();
 
         return view('baron.index', compact('barons'));
     }

@@ -10,6 +10,7 @@
                     </div>
 
                     <div class="card-body">
+                        @include('components.result-filters')
                         <table class="table table-hover text-center">
                             <thead>
                             <tr>
@@ -45,6 +46,7 @@
                             @endforeach
                             </tbody>
                         </table>
+                        {{ $bournouts->links() }}
                     </div>
                 </div>
             </div>

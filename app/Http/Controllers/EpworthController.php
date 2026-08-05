@@ -3,19 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Models\Epworth;
+use App\Http\Controllers\Concerns\FiltersResults;
 use Illuminate\Http\Request;
 
 class EpworthController extends Controller
 {
+    use FiltersResults;
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $epworths = Epworth::orderBy('id', 'desc')
-            ->when(auth()->user()->place, fn ($query, $placeId) => $query->where('place_id', $placeId))
-            ->whereDate('created_at', now()->toDateString())
-            ->paginate(100);
+        $this->authorizeResults();
+
+        $epworths = $this->filterResults(Epworth::query(), $request, ['name', 'dni', 'ocupation'])
+            ->orderBy('id', 'desc')
+            ->paginate(25)
+            ->withQueryString();
 
         return view('epworth.index', compact('epworths'));
     }

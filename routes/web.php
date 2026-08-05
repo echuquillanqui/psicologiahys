@@ -8,6 +8,8 @@ use App\Http\Controllers\ClaustrofobyController;
 use App\Http\Controllers\EpworthController;
 use App\Http\Controllers\EysenckController;
 use App\Http\Controllers\PatientController;
+use App\Http\Controllers\PlaceController;
+use App\Http\Controllers\SystemUserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -30,6 +32,8 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::resource('patients', PatientController::class)->only(['create', 'store'])->middleware('auth');
+Route::resource('system-users', SystemUserController::class)->only(['index', 'store'])->middleware('auth');
+Route::resource('places', PlaceController::class)->only(['store'])->middleware('auth');
 
 
 Route::resource('bournout', BournoutController::class)->names('bournout')->middleware('auth');
