@@ -10,6 +10,7 @@
                     </div>
 
                     <div class="card-body">
+                        @include('components.result-filters')
                         <table class="table table-hover text-center">
                             <thead>
                             <tr>
@@ -37,6 +38,7 @@
                             @endforeach
                             </tbody>
                         </table>
+                        {{ $claustrofobies->links() }}
                     </div>
                 </div>
             </div>

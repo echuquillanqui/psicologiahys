@@ -10,6 +10,7 @@
                     </div>
 
                     <div class="card-body">
+                        @include('components.result-filters')
                         <table class="table table-hover">
                             <thead>
                                 <tr>
@@ -37,6 +38,7 @@
                                 @endforeach
                             </tbody>
                         </table>
+                        {{ $barons->links() }}
                     </div>
                 </div>
             </div>

@@ -3,19 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Models\Claustrofoby;
+use App\Http\Controllers\Concerns\FiltersResults;
 use Illuminate\Http\Request;
 
 class ClaustrofobyController extends Controller
 {
+    use FiltersResults;
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $claustrofobies = Claustrofoby::orderBy('id', 'desc')
-            ->when(auth()->user()->place, fn ($query, $placeId) => $query->where('place_id', $placeId))
-            ->whereDate('created_at', now()->toDateString())
-            ->paginate(100);
+        $this->authorizeResults();
+
+        $claustrofobies = $this->filterResults(Claustrofoby::query(), $request, ['name', 'dni', 'ocupation', 'company'])
+            ->orderBy('id', 'desc')
+            ->paginate(25)
+            ->withQueryString();
 
         return view('clq.index', compact('claustrofobies'));
     }

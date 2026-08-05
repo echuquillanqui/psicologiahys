@@ -10,4 +10,9 @@ class Eysenck extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
+
+    public function patient()
+    {
+        return $this->belongsTo(User::class, 'patient_id');
+    }
 }

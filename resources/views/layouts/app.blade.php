@@ -56,6 +56,10 @@
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                    @if (in_array(Auth::user()->profile, ['admin', 'administrator', 'administrador', 'supervisor']))
+                                    <a class="dropdown-item" href="{{ route('system-users.index') }}">Usuarios del sistema</a>
+                                    @endif
+
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
@@ -66,6 +70,7 @@
                                         @csrf
                                     </form>
 
+                                    @if (Auth::user()->profile !== 'patient')
                                     <a class="dropdown-item" href="{{ route('bournout.index') }}">
                                         Resultados Bournout
                                     </a>
@@ -93,6 +98,7 @@
                                     <a class="dropdown-item" href="{{ route('epworth.index') }}">
                                         Resultados Epworth
                                     </a>
+                                    @endif
 
                                 </div>
 
