@@ -2,7 +2,7 @@
 
 @section('content')
 
-    <form class="container-fluid" action="{{ route('audit.store') }}" method="POST">
+    <form class="container-fluid exam-form" action="{{ route('audit.store') }}" method="POST">
         @csrf
 
 

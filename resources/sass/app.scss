@@ -206,3 +206,141 @@ main.py-4 {
         padding: 1rem;
     }
 }
+
+/* Interfaces de rellenado de exámenes psicológicos */
+.exam-form {
+    --exam-panel: rgba(255, 255, 255, 0.9);
+    --exam-border: rgba(14, 165, 233, 0.18);
+    --exam-muted: #64748b;
+}
+
+.exam-form > .row:first-of-type .card,
+.exam-form .card:first-child {
+    position: relative;
+}
+
+.exam-form .card-header {
+    padding: 1.45rem;
+}
+
+.exam-form .card-header h3,
+.exam-form .card-header h4,
+.exam-form .card-header h5 {
+    line-height: 1.25;
+}
+
+.exam-form .card-header .row {
+    margin-top: 1.1rem;
+    align-items: end;
+    border-radius: 1.1rem;
+    background: rgba(255, 255, 255, 0.16);
+    padding: 0.85rem 0.55rem 0.35rem;
+}
+
+.exam-form .card-header .form-label {
+    color: #fff;
+    font-size: 0.82rem;
+    letter-spacing: 0.045em;
+    text-transform: uppercase;
+}
+
+.exam-form .card-header .form-control,
+.exam-form .card-header .form-select {
+    border-color: rgba(255, 255, 255, 0.58);
+    background: rgba(255, 255, 255, 0.94);
+}
+
+.exam-form .bg-warning {
+    margin: 1rem 0.75rem 0.35rem;
+    border: 1px solid rgba(255, 255, 255, 0.36);
+    background: rgba(255, 255, 255, 0.92) !important;
+    color: var(--ink-600) !important;
+    text-align: left;
+}
+
+.exam-form .card-body > .row,
+.exam-form .card-body > div > .row {
+    gap: 0.35rem 0;
+}
+
+.exam-form .card-body .row > label.col-form-label {
+    min-height: 3.2rem;
+    display: flex;
+    align-items: center;
+    margin: 0.35rem 0 0;
+    border: 1px solid var(--exam-border);
+    border-right: 0;
+    border-radius: 1rem 0 0 1rem;
+    background: var(--exam-panel);
+    padding: 0.85rem 1rem;
+    color: var(--ink-900);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+}
+
+.exam-form .card-body .row > label.col-form-label + div[class*="col-sm-"] {
+    min-height: 3.2rem;
+    display: flex;
+    align-items: center;
+    margin: 0.35rem 0 0 !important;
+    border: 1px solid var(--exam-border);
+    border-left: 0;
+    border-radius: 0 1rem 1rem 0;
+    background: var(--exam-panel);
+    padding: 0.55rem 0.75rem;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+}
+
+.exam-form .card-body .row > label.col-form-label + div[class*="col-sm-"] .form-select,
+.exam-form .card-body .row > label.col-form-label + div[class*="col-sm-"] .form-control {
+    width: 100%;
+    min-height: 2.65rem;
+    font-weight: 800;
+}
+
+.exam-form .table {
+    margin-bottom: 1.35rem;
+    box-shadow: 0 14px 30px rgba(14, 165, 233, 0.12);
+}
+
+.exam-form button[type="submit"] {
+    width: min(100%, 420px);
+    display: block;
+    margin: 1rem auto 1.3rem;
+    padding: 0.95rem 1.5rem;
+    text-transform: uppercase;
+}
+
+.exam-form button[type="submit"]::after {
+    content: '  ›';
+    font-size: 1.15em;
+}
+
+@media (max-width: 575.98px) {
+    .exam-form .card-header {
+        padding: 1rem;
+    }
+
+    .exam-form .card-header h3,
+    .exam-form .card-header h4,
+    .exam-form .card-header h5 {
+        font-size: 1.08rem;
+    }
+
+    .exam-form .card-body .row > label.col-form-label,
+    .exam-form .card-body .row > label.col-form-label + div[class*="col-sm-"] {
+        border: 1px solid var(--exam-border);
+        border-radius: 1rem;
+    }
+
+    .exam-form .card-body .row > label.col-form-label + div[class*="col-sm-"] {
+        margin-top: 0 !important;
+        padding-top: 0;
+        border-top: 0;
+        border-radius: 0 0 1rem 1rem;
+    }
+
+    .exam-form .card-body .row > label.col-form-label {
+        border-bottom: 0;
+        border-radius: 1rem 1rem 0 0;
+    }
+}

@@ -8,7 +8,7 @@
                     <div class="card-header text-center">
                         <h3>TEST DE ESTRÉS Y BOURNOUT</h3>
                     </div>
-                    <form action="{{ route('bournout.store') }}" method="POST">
+                    <form class="exam-form" action="{{ route('bournout.store') }}" method="POST">
                         @csrf
                         <div class="card-body">
 
