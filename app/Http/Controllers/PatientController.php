@@ -20,8 +20,41 @@ class PatientController extends Controller
         'epworth' => 'Escala de Somnolencia de Epworth',
     ];
 
+    public function index(Request $request)
+    {
+        $this->authorizePatients();
+
+        $filters = $request->validate([
+            'search' => ['nullable', 'string', 'max:255'],
+            'place_id' => ['nullable', 'exists:places,id'],
+            'exam' => ['nullable', Rule::in(array_keys(self::EXAMS))],
+            'status' => ['nullable', Rule::in(['active', 'inactive'])],
+        ]);
+
+        $patients = User::where('profile', 'patient')
+            ->when($filters['search'] ?? null, function ($query, $search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('name', 'like', "%{$search}%")
+                        ->orWhere('username', 'like', "%{$search}%");
+                });
+            })
+            ->when($filters['place_id'] ?? null, fn ($query, $placeId) => $query->where('place', $placeId))
+            ->when($filters['exam'] ?? null, fn ($query, $exam) => $query->whereJsonContains('assigned_exams', $exam))
+            ->when($filters['status'] ?? null, fn ($query, $status) => $query->where('active', $status === 'active'))
+            ->orderBy('name')
+            ->paginate(25)
+            ->withQueryString();
+
+        $places = Place::orderBy('name')->get();
+        $exams = self::EXAMS;
+
+        return view('patients.index', compact('patients', 'places', 'exams', 'filters'));
+    }
+
     public function create()
     {
+        $this->authorizePatients();
+
         $places = Place::orderBy('name')->get();
         $exams = self::EXAMS;
 
@@ -30,18 +63,8 @@ class PatientController extends Controller
 
     public function store(Request $request)
     {
-        $request->merge([
-            'dni' => preg_replace('/\s+/', '', trim($request->input('dni', ''))),
-        ]);
-
-        $data = $request->validate([
-            'name' => ['required', 'string', 'min:5', 'max:255'],
-            'dni' => ['required', 'string', 'max:20', Rule::unique('users', 'username')],
-            'place_id' => ['nullable', 'exists:places,id'],
-            'assigned_exams' => ['nullable', 'array'],
-            'assigned_exams.*' => ['string', Rule::in(array_keys(self::EXAMS))],
-        ]);
-
+        $this->authorizePatients();
+        $data = $this->validatePatient($request);
         $placeId = $data['place_id'] ?? auth()->user()->place;
 
         User::create([
@@ -49,11 +72,62 @@ class PatientController extends Controller
             'username' => $data['dni'],
             'profile' => 'patient',
             'place' => $placeId,
+            'active' => $request->has('active') ? $request->boolean('active') : true,
             'email' => $data['dni'].'@paciente.local',
             'password' => Hash::make($data['dni']),
             'assigned_exams' => $data['assigned_exams'] ?? [],
         ]);
 
-        return redirect()->route('home')->with('status', 'Paciente registrado y exámenes asignados correctamente.');
+        return redirect()->route('patients.index')->with('status', 'Paciente registrado y exámenes asignados correctamente.');
+    }
+
+    public function update(Request $request, User $patient)
+    {
+        $this->authorizePatients();
+        abort_unless($patient->profile === 'patient', 404);
+
+        $data = $this->validatePatient($request, $patient);
+
+        $patient->update([
+            'name' => $data['name'],
+            'username' => $data['dni'],
+            'place' => $data['place_id'] ?? null,
+            'active' => $request->boolean('active'),
+            'email' => $data['dni'].'@paciente.local',
+            'assigned_exams' => $data['assigned_exams'] ?? [],
+        ]);
+
+        return redirect()->route('patients.index')->with('status', 'Paciente actualizado correctamente.');
+    }
+
+    public function destroy(User $patient)
+    {
+        $this->authorizePatients();
+        abort_unless($patient->profile === 'patient', 404);
+
+        $patient->delete();
+
+        return redirect()->route('patients.index')->with('status', 'Paciente eliminado correctamente.');
+    }
+
+    private function validatePatient(Request $request, ?User $patient = null): array
+    {
+        $request->merge([
+            'dni' => preg_replace('/\s+/', '', trim($request->input('dni', ''))),
+        ]);
+
+        return $request->validate([
+            'name' => ['required', 'string', 'min:5', 'max:255'],
+            'dni' => ['required', 'string', 'max:20', Rule::unique('users', 'username')->ignore($patient?->id)],
+            'place_id' => ['nullable', 'exists:places,id'],
+            'active' => ['nullable', 'boolean'],
+            'assigned_exams' => ['nullable', 'array'],
+            'assigned_exams.*' => ['string', Rule::in(array_keys(self::EXAMS))],
+        ]);
+    }
+
+    private function authorizePatients(): void
+    {
+        abort_if(auth()->user()->profile === 'patient', 403);
     }
 }
