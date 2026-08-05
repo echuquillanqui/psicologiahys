@@ -1,5 +1,6 @@
 <form method="GET" class="row g-2 align-items-end mb-3">
     @php($places = \App\Models\Place::orderBy('name')->get())
+    @php($selectedPlaceId = request('place_id', auth()->user()->place))
     <div class="col-md-3">
         <label class="form-label">Fecha</label>
         <input type="date" name="date" class="form-control" value="{{ request('date', now()->toDateString()) }}">
@@ -13,7 +14,7 @@
         <select name="place_id" class="form-select">
             <option value="">Todas las sedes</option>
             @foreach($places as $place)
-                <option value="{{ $place->id }}" @selected(request('place_id') == $place->id)>{{ $place->name }}</option>
+                <option value="{{ $place->id }}" @selected($selectedPlaceId == $place->id)>{{ $place->name }}</option>
             @endforeach
         </select>
     </div>

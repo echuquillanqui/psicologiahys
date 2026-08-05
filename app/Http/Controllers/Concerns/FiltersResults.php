@@ -21,7 +21,7 @@ trait FiltersResults
         $allowedAll = in_array($user->profile, ['admin', 'administrator', 'administrador', 'psychologist', 'psicologo', 'supervisor']);
         $date = $request->input('date', now()->toDateString());
         $search = trim((string) $request->input('search', ''));
-        $placeId = $request->input('place_id');
+        $placeId = $request->input('place_id', $user->place);
 
         return $query
             ->when(! $allowedAll && $user->place, fn ($query) => $query->where('place_id', $user->place))
