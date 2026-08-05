@@ -13,6 +13,7 @@ class ClaustrofobyController extends Controller
     public function index()
     {
         $claustrofobies = Claustrofoby::orderBy('id', 'desc')
+            ->when(auth()->user()->place, fn ($query, $placeId) => $query->where('place_id', $placeId))
             ->whereDate('created_at', now()->toDateString())
             ->paginate(100);
 
@@ -24,6 +25,8 @@ class ClaustrofobyController extends Controller
      */
     public function create()
     {
+        abort_if(auth()->user()->profile === 'patient' && ! in_array('clq', auth()->user()->assigned_exams ?? []), 403);
+
         return view('clq.create');
     }
 
@@ -50,7 +53,7 @@ class ClaustrofobyController extends Controller
     public function store(Request $request)
     {
         $this->ValidacionClq($request);
-        $clq = Claustrofoby::create(request()->all());
+        $clq = Claustrofoby::create(request()->all() + ['place_id' => auth()->user()->place, 'patient_id' => auth()->id()]);
 
         $sumaclq = $clq->p1 + $clq->p2 +$clq->p3 +$clq->p4 +$clq->p5 +$clq->p6 +$clq->p7 +$clq->p8;
 

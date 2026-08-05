@@ -1,79 +1,49 @@
 @extends('layouts.app')
 
 @section('content')
+@php
+    $exams = [
+        'bournout' => ['title' => 'TEST DE ESTRÉS Y BOURNOUT', 'route' => 'bournout.create', 'class' => 'btn-primary'],
+        'eysenck' => ['title' => 'EYSENCK A-B', 'route' => 'eysenck.create', 'class' => 'btn-success'],
+        'baron' => ['title' => 'INVENTARIO EMOCIONAL BARON', 'route' => 'baron.create', 'class' => 'btn-info'],
+        'clq' => ['title' => 'CUESTIONARIO DE CLAUSTROFOBIA', 'route' => 'clq.create', 'class' => 'btn-danger'],
+        'audit' => ['title' => 'CUESTIONARIO AUDIT', 'route' => 'audit.create', 'class' => 'btn-warning'],
+        'cohen' => ['title' => 'CUESTIONARIO DE ACROFOBIA (COHEN)', 'route' => 'cohen.create', 'class' => 'btn-secondary'],
+        'epworth' => ['title' => 'ESCALA DE SOMNOLENCIA DE EPWORTH', 'route' => 'epworth.create', 'class' => 'btn-outline-danger'],
+    ];
+
+    $user = auth()->user();
+    $visibleExams = $user->profile === 'patient'
+        ? array_intersect_key($exams, array_flip($user->assigned_exams ?? []))
+        : $exams;
+@endphp
+
 <div class="container-fluid">
+    @if (session('status'))
+        <div class="alert alert-success">{{ session('status') }}</div>
+    @endif
+
+    @if ($user->profile !== 'patient')
+        <div class="mb-3 text-end">
+            <a href="{{ route('patients.create') }}" class="btn btn-dark">Registrar paciente y asignar exámenes</a>
+        </div>
+    @endif
+
     <div class="row justify-content-center text-center">
-
-        <div class="row">
-
-            <div class="col-md-3 col-lg-3 col-sm-12 col-12 mb-1">
-                <div class="card">
+        @forelse($visibleExams as $exam)
+            <div class="col-md-3 col-lg-3 col-sm-12 col-12 mb-4">
+                <div class="card h-100">
                     <div class="card-body">
-                        <h5 class="card-title">TEST DE ESTRÉS Y BOURNOUT</h5>
-                        <a href="{{ route('bournout.create') }}" class="btn btn-primary">ACCEDER AL EXAMEN</a>
+                        <h5 class="card-title">{{ $exam['title'] }}</h5>
+                        <a href="{{ route($exam['route']) }}" class="btn {{ $exam['class'] }}">ACCEDER AL EXAMEN</a>
                     </div>
                 </div>
             </div>
-
-            <div class="col-md-3 col-lg-3 col-sm-12 col-12 mb-1">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">EYSENCK A-B</h5>
-                        <a href="{{ route('eysenck.create') }}" class="btn btn-success">ACCEDER AL EXAMEN</a>
-                    </div>
-                </div>
+        @empty
+            <div class="col-md-8">
+                <div class="alert alert-info">No tienes exámenes asignados. Comunícate con la sede para recibir una asignación.</div>
             </div>
-
-            <div class="col-md-3 col-lg-3 col-sm-12 col-12 mb-1">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">INVENTARIO EMOCIONAL BARON</h5>
-                        <a href="{{ route('baron.create') }}" class="btn btn-info">ACCEDER AL EXAMEN</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3 col-lg-3 col-sm-12 col-12 mb-1">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">CUESTIONARIO DE CLAUSTROFOBIA</h5>
-                        <a href="{{ route('clq.create') }}" class="btn btn-danger">ACCEDER AL EXAMEN</a>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <div class="row mt-4">
-
-            <div class="col-md-3 col-lg-3 col-sm-12 col-12 mb-1">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">CUESTIONARIO AUDIT</h5>
-                        <a href="{{ route('audit.create') }}" class="btn btn-warning">ACCEDER AL EXAMEN</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3 col-lg-3 col-sm-12 col-12 mb-1">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">CUESTIONARIO DE ACROFOBIA (COHEN)</h5>
-                        <a href="{{ route('cohen.create') }}" class="btn btn-secondary">ACCEDER AL EXAMEN</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3 col-lg-3 col-sm-12 col-12 mb-1">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">ESCALA DE SOMNOLENCIA DE EPWORTH</h5>
-                        <a href="{{ route('epworth.create') }}" class="btn btn-outline-danger">ACCEDER AL EXAMEN</a>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
+        @endforelse
     </div>
+</div>
 @endsection

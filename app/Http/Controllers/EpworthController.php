@@ -13,6 +13,7 @@ class EpworthController extends Controller
     public function index()
     {
         $epworths = Epworth::orderBy('id', 'desc')
+            ->when(auth()->user()->place, fn ($query, $placeId) => $query->where('place_id', $placeId))
             ->whereDate('created_at', now()->toDateString())
             ->paginate(100);
 
@@ -24,6 +25,8 @@ class EpworthController extends Controller
      */
     public function create()
     {
+        abort_if(auth()->user()->profile === 'patient' && ! in_array('epworth', auth()->user()->assigned_exams ?? []), 403);
+
         return view('epworth.create');
     }
 
@@ -51,7 +54,7 @@ class EpworthController extends Controller
     {
         $this->ValidacionEpworth($request);
 
-        $epworth = Epworth::create(request()->all());
+        $epworth = Epworth::create(request()->all() + ['place_id' => auth()->user()->place, 'patient_id' => auth()->id()]);
 
         $sumaepworth = $epworth->p1 + $epworth->p2 + $epworth->p3 + $epworth->p4 + $epworth->p5 + $epworth->p6 + $epworth->p7 + $epworth->p8;
 

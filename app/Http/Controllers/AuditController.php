@@ -13,6 +13,7 @@ class AuditController extends Controller
     public function index()
     {
         $audits = Audit::orderBy('id', 'desc')
+            ->when(auth()->user()->place, fn ($query, $placeId) => $query->where('place_id', $placeId))
             ->whereDate('created_at', now()->toDateString())
             ->paginate(100);
 
@@ -24,6 +25,8 @@ class AuditController extends Controller
      */
     public function create()
     {
+        abort_if(auth()->user()->profile === 'patient' && ! in_array('audit', auth()->user()->assigned_exams ?? []), 403);
+
         return view('audit.create');
     }
 
@@ -50,7 +53,7 @@ class AuditController extends Controller
     {
         $this->ValidacionAudit($request);
 
-        $audit = Audit::create(request()->all());
+        $audit = Audit::create(request()->all() + ['place_id' => auth()->user()->place, 'patient_id' => auth()->id()]);
 
         $sumaaudit = $audit->p1 + $audit->p2 + $audit->p3 + $audit->p4 + $audit->p5 + $audit->p6 + $audit->p7 + $audit->p8 + $audit->p9 + $audit->p10;
 

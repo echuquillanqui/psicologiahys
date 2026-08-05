@@ -22,6 +22,7 @@ class User extends Authenticatable
         'username',
         'profile',
         'place',
+        'assigned_exams',
         'email',
         'password',
     ];
@@ -44,5 +45,6 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'assigned_exams' => 'array',
     ];
 }

@@ -13,6 +13,7 @@ class EysenckController extends Controller
     public function index()
     {
         $eysencks = Eysenck::orderBy('id', 'desc')
+            ->when(auth()->user()->place, fn ($query, $placeId) => $query->where('place_id', $placeId))
             ->whereDate('created_at', now()->toDateString())
             ->paginate(100);
 
@@ -24,6 +25,8 @@ class EysenckController extends Controller
      */
     public function create()
     {
+        abort_if(auth()->user()->profile === 'patient' && ! in_array('eysenck', auth()->user()->assigned_exams ?? []), 403);
+
         return view('eysenck.create');
     }
 
@@ -53,7 +56,7 @@ class EysenckController extends Controller
     public function store(Request $request)
     {
         $this->DataValidation($request);
-        Eysenck::create($request->all());
+        Eysenck::create($request->all() + ['place_id' => auth()->user()->place, 'patient_id' => auth()->id()]);
 
         return redirect('home');
     }
