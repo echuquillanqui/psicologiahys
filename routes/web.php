@@ -32,8 +32,8 @@ Auth::routes(['register' => false]);
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::resource('patients', PatientController::class)->only(['create', 'store'])->middleware('auth');
-Route::resource('system-users', SystemUserController::class)->only(['index', 'store'])->middleware('auth');
-Route::resource('places', PlaceController::class)->only(['index', 'store'])->middleware('auth');
+Route::resource('system-users', SystemUserController::class)->only(['index', 'store', 'update', 'destroy'])->parameters(['system-users' => 'systemUser'])->middleware('auth');
+Route::resource('places', PlaceController::class)->only(['index', 'store', 'update', 'destroy'])->middleware('auth');
 
 
 Route::resource('bournout', BournoutController::class)->names('bournout')->middleware('auth');

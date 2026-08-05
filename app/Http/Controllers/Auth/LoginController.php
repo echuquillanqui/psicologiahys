@@ -56,7 +56,7 @@ class LoginController extends Controller
         $field = $loginType === 'patient' ? 'username' : 'email';
         $user = User::where($field, $request->input('login'))->first();
 
-        if (! $user || ($loginType === 'patient') !== ($user->profile === 'patient')) {
+        if (! $user || ! $user->active || ($loginType === 'patient') !== ($user->profile === 'patient')) {
             return false;
         }
 
