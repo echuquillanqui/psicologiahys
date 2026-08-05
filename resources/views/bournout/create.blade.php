@@ -6,7 +6,7 @@
             <div class="col-md-9">
                 <div class="card">
                     <div class="card-header text-center">
-                        <h3>{{ __('ESTRÉS Y BOURNOUT - H&S OCCUPATIONAL SAC') }} - {{ \Carbon\Carbon::now()->format('d-m-Y') }}</h3>
+                        <h3>TEST DE ESTRÉS Y BOURNOUT</h3>
                     </div>
                     <form action="{{ route('bournout.store') }}" method="POST">
                         @csrf
