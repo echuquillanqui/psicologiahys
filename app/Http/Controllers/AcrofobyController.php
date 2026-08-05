@@ -13,6 +13,7 @@ class AcrofobyController extends Controller
     public function index()
     {
         $cohens = Acrofoby::orderBy('id', 'desc')
+            ->when(auth()->user()->place, fn ($query, $placeId) => $query->where('place_id', $placeId))
             ->whereDate('created_at', now()->toDateString())
             ->paginate(100);
 
@@ -24,6 +25,8 @@ class AcrofobyController extends Controller
      */
     public function create()
     {
+        abort_if(auth()->user()->profile === 'patient' && ! in_array('cohen', auth()->user()->assigned_exams ?? []), 403);
+
         return view('cohen.create');
     }
 
@@ -50,7 +53,7 @@ class AcrofobyController extends Controller
     public function store(Request $request)
     {
         $this->ValidacionCohen($request);
-        $cohen = Acrofoby::create(request()->all());
+        $cohen = Acrofoby::create(request()->all() + ['place_id' => auth()->user()->place, 'patient_id' => auth()->id()]);
 
         $sumacohen = $cohen->p1 + $cohen->p2 + $cohen->p3 + $cohen->p4 + $cohen->p5 + $cohen->p6 + $cohen->p7 + $cohen->p8 + $cohen->p9 + $cohen->p10 +
             $cohen->p11 + $cohen->p12 + $cohen->p13 + $cohen->p14 + $cohen->p15 + $cohen->p16 + $cohen->p17 + $cohen->p18 + $cohen->p19 + $cohen->p20;

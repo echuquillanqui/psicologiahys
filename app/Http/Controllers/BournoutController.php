@@ -13,6 +13,7 @@ class BournoutController extends Controller
     public function index()
     {
         $bournouts = Bournout::orderBy('id', 'desc')
+            ->when(auth()->user()->place, fn ($query, $placeId) => $query->where('place_id', $placeId))
             ->whereDate('created_at', now()->toDateString())
             ->paginate(100);
 
@@ -24,6 +25,8 @@ class BournoutController extends Controller
      */
     public function create()
     {
+        abort_if(auth()->user()->profile === 'patient' && ! in_array('bournout', auth()->user()->assigned_exams ?? []), 403);
+
         return view('bournout.create');
     }
 
@@ -54,7 +57,7 @@ class BournoutController extends Controller
     public function store(Request $request)
     {
         $this->DataValidation($request);
-        Bournout::create($request->all());
+        Bournout::create($request->all() + ['place_id' => auth()->user()->place, 'patient_id' => auth()->id()]);
 
         return redirect('home');
     }
