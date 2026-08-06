@@ -10,15 +10,16 @@
                     <form method="POST" action="{{ route('patients.store') }}">
                         @csrf
                         <div class="mb-3">
-                            <label class="form-label">Nombres y apellidos</label>
-                            <input name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" required>
-                            @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            <label class="form-label">DNI</label>
+                            <input id="patient-dni" name="dni" class="form-control @error('dni') is-invalid @enderror" value="{{ old('dni') }}" autocomplete="off" required>
+                            <small class="text-muted">El DNI será el usuario y contraseña inicial del paciente.</small>
+                            <div id="patient-dni-status" class="form-text"></div>
+                            @error('dni')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">DNI</label>
-                            <input name="dni" class="form-control @error('dni') is-invalid @enderror" value="{{ old('dni') }}" required>
-                            <small class="text-muted">El DNI será el usuario y contraseña inicial del paciente.</small>
-                            @error('dni')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            <label class="form-label">Nombres y apellidos</label>
+                            <input id="patient-name" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" required>
+                            @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Sede</label>
@@ -50,4 +51,71 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const dniInput = document.getElementById('patient-dni');
+    const nameInput = document.getElementById('patient-name');
+    const status = document.getElementById('patient-dni-status');
+    const lookupUrl = @json(route('patients.lookup', ['dni' => '__DNI__']));
+    let controller;
+    let lookupTimer;
+
+    const setStatus = (message, className = 'form-text') => {
+        status.textContent = message;
+        status.className = className;
+    };
+
+    const findPatient = async () => {
+        const dni = dniInput.value.replace(/\s+/g, '').trim();
+
+        if (controller) {
+            controller.abort();
+        }
+
+        if (!dni) {
+            setStatus('');
+            return;
+        }
+
+        controller = new AbortController();
+
+        try {
+            const response = await fetch(lookupUrl.replace('__DNI__', encodeURIComponent(dni)), {
+                headers: {
+                    Accept: 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                signal: controller.signal,
+            });
+
+            if (response.ok) {
+                const patient = await response.json();
+                nameInput.value = patient.name;
+                setStatus('Paciente encontrado. Se completaron nombres y apellidos automáticamente.', 'form-text text-success');
+                return;
+            }
+
+            if (response.status === 404) {
+                setStatus('Paciente no registrado. Complete sus nombres y apellidos.', 'form-text text-muted');
+                return;
+            }
+
+            setStatus('No se pudo verificar el DNI. Intente nuevamente.', 'form-text text-danger');
+        } catch (error) {
+            if (error.name !== 'AbortError') {
+                setStatus('No se pudo verificar el DNI. Intente nuevamente.', 'form-text text-danger');
+            }
+        }
+    };
+
+    dniInput.addEventListener('input', () => {
+        clearTimeout(lookupTimer);
+        lookupTimer = setTimeout(findPatient, 500);
+    });
+    dniInput.addEventListener('blur', findPatient);
+});
+</script>
 @endsection
