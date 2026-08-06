@@ -63,13 +63,35 @@ class PatientController extends Controller
         return view('patients.create', compact('places', 'exams'));
     }
 
+    public function lookupByDni(string $dni)
+    {
+        $this->authorizePatients();
+
+        $normalizedDni = preg_replace('/\s+/', '', trim($dni));
+        $patient = User::where('profile', 'patient')
+            ->where('username', $normalizedDni)
+            ->first();
+
+        abort_if(! $patient, 404);
+
+        return response()->json([
+            'name' => $patient->name,
+        ]);
+    }
+
     public function store(Request $request)
     {
         $this->authorizePatients();
-        $data = $this->validatePatient($request);
+        $data = $this->validatePatient($request, allowExistingPatient: true);
         $placeId = $data['place_id'] ?? auth()->user()->place;
+        $patient = User::where('profile', 'patient')->where('username', $data['dni'])->first();
 
-        User::create([
+        $patient?->update([
+            'name' => $data['name'],
+            'place' => $placeId,
+            'active' => $request->has('active') ? $request->boolean('active') : true,
+            'assigned_exams' => $data['assigned_exams'] ?? [],
+        ]) ?? User::create([
             'name' => $data['name'],
             'username' => $data['dni'],
             'profile' => 'patient',
@@ -80,7 +102,7 @@ class PatientController extends Controller
             'assigned_exams' => $data['assigned_exams'] ?? [],
         ]);
 
-        return redirect()->route('patients.index')->with('status', 'Paciente registrado y exámenes asignados correctamente.');
+        return redirect()->route('patients.index')->with('status', 'Paciente registrado o actualizado y exámenes asignados correctamente.');
     }
 
     public function update(Request $request, User $patient)
@@ -112,15 +134,23 @@ class PatientController extends Controller
         return redirect()->route('patients.index')->with('status', 'Paciente eliminado correctamente.');
     }
 
-    private function validatePatient(Request $request, ?User $patient = null): array
+    private function validatePatient(Request $request, ?User $patient = null, bool $allowExistingPatient = false): array
     {
         $request->merge([
             'dni' => preg_replace('/\s+/', '', trim($request->input('dni', ''))),
         ]);
 
+        $dniRules = ['required', 'string', 'max:20'];
+
+        if (! $allowExistingPatient) {
+            $dniRules[] = Rule::unique('users', 'username')->ignore($patient?->id);
+        } else {
+            $dniRules[] = Rule::unique('users', 'username')->where(fn ($query) => $query->where('profile', '!=', 'patient'));
+        }
+
         return $request->validate([
             'name' => ['required', 'string', 'min:5', 'max:255'],
-            'dni' => ['required', 'string', 'max:20', Rule::unique('users', 'username')->ignore($patient?->id)],
+            'dni' => $dniRules,
             'place_id' => ['nullable', 'exists:places,id'],
             'active' => ['nullable', 'boolean'],
             'assigned_exams' => ['nullable', 'array'],
